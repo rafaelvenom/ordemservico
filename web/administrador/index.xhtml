@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+
+        <!-- Biblioteca dos icones dos botões !-->
+        <h:outputStylesheet library="awesome" name="css/font-awesome.css" />
+        <!-- Biblioteca dos icones dos botões !-->
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 13px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body>
+
+        <!-- Verifica se o usuário está logado !-->
+        <h:outputLabel value="#{loginController.verificaSessao()}"/>
+        <!-- Verifica se o usuário está logado !-->
+
+        <div align="center">
+
+
+            <p:layout fullPage="true">
+                <p:layoutUnit  position="west" size="210" resizable="false" closable="false" collapsible="false">  
+                    <h:form>
+
+
+
+                        <p:growl id="messages" showDetail="false"/>
+
+                        <p:menu  >
+                            <p:submenu  label="Início" style="size:200px">
+                                <p:menuitem value="Página Inicial" url="index.xhtml"/>
+                            </p:submenu>
+                            <p:submenu  label="Cadastros" style="size:200px">
+
+                                <p:menuitem value="Clientes" url="Cliente.xhtml"/>
+
+                                <p:menuitem value="Departamentos" url="Departamento.xhtml"/>
+
+                                <p:menuitem value="Ordem de Serviço" url="Ordem_Servico.xhtml"/>
+
+                                <p:menuitem value="Serviços" url="Servico.xhtml"/>
+
+                                <p:menuitem value="Técnicos" url="Tecnico.xhtml"/>
+
+                                <p:menuitem value="Usuário" url="Usuario.xhtml"/>
+
+
+                            </p:submenu>
+
+                        </p:menu>
+
+                    </h:form>
+
+                </p:layoutUnit>
+
+
+
+                <p:layoutUnit position="center">  
+
+                    <ui:insert name="centro">
+                        <h:form >
+
+                            <p:growl id="messages"/>
+
+                            <p:menubar>
+                                <p:submenu label="Cadastrar" icon="ui-icon-document">
+                                    <p:submenu label="Novo(a)" icon="ui-icon-contact">
+                                        <p:menuitem value="Cliente" url="Cliente.xhtml"/>
+
+                                        <p:menuitem value="Departamento" url="Departamento.xhtml"/>
+
+                                        <p:menuitem value="Ordem de Serviço" url="Ordem_Servico.xhtml"/>
+
+                                        <p:menuitem value="Serviço" url="Servico.xhtml"/>
+
+                                        <p:menuitem value="Técnico" url="Tecnico.xhtml"/>
+
+                                        <p:menuitem value="Usuário" url="Usuario.xhtml"/>
+                                    </p:submenu>
+                                </p:submenu>
+
+                                <p:menuitem value="Sair do sistema" action="#{loginController.logout()}" icon="ui-icon-close" ajax="false" />
+
+                                <f:facet name="options">
+                                    <h:outputText value='Logado como: #{loginController.usuario.nome.toUpperCase()}'/>
+                                </f:facet>
+
+                            </p:menubar>
+
+                            <p:separator/>
+
+                        </h:form>    
+                    </ui:insert>
+                </p:layoutUnit> 
+
+            </p:layout>  
+        </div>
+    </h:body>
+</html>
+

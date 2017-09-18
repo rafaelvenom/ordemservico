@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head>
+        <title>InfoPublic - Consultas</title>
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 13px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body style="font-size: 10px">
+        <ui:decorate template="index.xhtml">
+            <ui:define name="centro">
+                <h:form id="FormularioTabela">
+
+                    <h:panelGrid columns="2" cellpadding="0" cellspacing="5">
+
+
+                        <h:outputLabel value="Selecione a Empresa"/>
+                        <br/>
+                        <p:selectOneMenu effect="fade" value="#{ordem_ServicoController.cnpj}">
+                            <p:ajax update="dTableLista"/>
+                            <f:selectItem itemLabel="Selecione o CNPJ" itemValue=""/>
+                            <f:selectItems value="#{clienteController.lista}" itemLabel="#{loginController.cliente.razaoSocial}" itemValue="#{loginController.cliente.cnpj}"/>
+                        </p:selectOneMenu>
+
+
+                    </h:panelGrid>
+
+
+                    <p:dataTable id="dTableLista" var="teste" value="#{ordem_ServicoController.listaCliente}" paginator="TRUE" rows="10" emptyMessage="Não ha Registros no Banco de Dados!" widgetVar="tav">
+                        <f:facet name="header">  
+                            <p:outputPanel>  
+                                <h:outputText value="Controle de Ordem Servico" />  
+                            </p:outputPanel>  
+                        </f:facet>  
+
+                        <p:column  style="text-align: center;width: 100px; "  filterBy="#{teste.id}">  
+                            <f:facet name="header">O.S.</f:facet>  
+                            <h:outputText value="#{teste.id}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Departamento</f:facet>  
+                            <h:outputText value="#{teste.departamento.descricao}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Situação</f:facet>  
+                            <h:outputText value="#{teste.situacao}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Data Incial</f:facet>  
+                            <h:outputText  value="#{teste.data_inicio}">  
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Defeito Reclamado</f:facet>  
+                            <h:outputText value="#{teste.defeito_relato}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Defeito Apresentado</f:facet>  
+                            <h:outputText value="#{teste.detalhe_servico}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Data Final</f:facet>  
+                            <h:outputText value="#{teste.data_fim}" >  
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+
+
+                    </p:dataTable>
+
+                    <p:separator style="visibility: hidden"/>
+
+                    <p:panel header="Exportar dados em">
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/excel.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="xls" target="dTableLista" fileName="pessdes" pageOnly="true"/>
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/pdf.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="pdf" target="dTableLista" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="csv" target="dTableLista" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="xml" target="dTableLista" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+                    </p:panel>
+
+                    <h:link value="Voltar" outcome="index" style="font-size: 14px" />
+
+                </h:form>
+            </ui:define>
+        </ui:decorate>
+    </h:body>
+
+</html>
+

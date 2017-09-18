@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head>
+        <title>Controle de Cliente</title>
+
+        <!--Inicio de validação de  exclusão-->
+        <script type="text/javascript">
+            function validaForm(xhr, status, args) {
+                if (args.validationFailed || !args.sucesso) {
+                    //faz nada
+                } else {
+                    PF('cadastroCliente').hide();
+                }
+            }
+
+            function validaErroIntegridade(xhr, status, args) {
+                if (args.validationFailed || !args.sucesso) {
+                    alert("Registro Possui Vinculo Com outros Modulos e Não Pode Ser Excluido!");
+                    PF('excluir').hide();
+                } else {
+                    PF('excluir').hide();
+                }
+            }
+
+        </script>         
+        <!--Fim de validação de  exclusão-->
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 13px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body style="font-size: 10px">
+        <ui:decorate template="index.xhtml">
+            <ui:define name="centro">
+                <h:form id="FormularioTabela">
+
+                    <p:growl id="messages"/>
+
+                            <p:menubar>
+                                <p:submenu label="Cadastrar" icon="ui-icon-document">
+                                    <p:submenu label="Novo(a)" icon="ui-icon-contact">
+                                        <p:menuitem value="Cliente" url="Cliente.xhtml"/>
+
+                                        <p:menuitem value="Departamento" url="Departamento.xhtml"/>
+
+                                        <p:menuitem value="Ordem de Serviço" url="Ordem_Servico.xhtml"/>
+
+                                        <p:menuitem value="Serviço" url="Servico.xhtml"/>
+
+                                        <p:menuitem value="Técnico" url="Tecnico.xhtml"/>
+
+                                        <p:menuitem value="Usuário" url="Usuario.xhtml"/>
+                                    </p:submenu>
+                                </p:submenu>
+
+                                <p:menuitem value="Sair do sistema" action="#{loginController.logout()}" icon="ui-icon-close" ajax="false" />
+
+                                <f:facet name="options">
+                                    <h:outputText value='Logado como: #{loginController.usuario.nome.toUpperCase()}'/>
+                                </f:facet>
+
+                            </p:menubar>
+
+                            <p:separator/>
+                    
+                    
+                    <!--Inicio da tabela cliente-->
+                    <p:dataTable id="TabelaCliente" var="cliente" value="#{clienteController.lista}" paginator="TRUE" rows="10" emptyMessage="Não ha Registros no Banco de Dados!" widgetVar="tav">
+
+                        <!--Titulo da tabela-->
+                        <f:facet name="header">  
+                            <p:outputPanel>  
+                                <h:outputText value="Controle de Cliente" />  
+                            </p:outputPanel>  
+                        </f:facet>  
+                        <!--Fim do titulo da tabela-->
+
+                        <p:column style="text-align: center;" filterBy="#{cliente.razaoSocial}">  
+                            <f:facet name="header">Razão Social</f:facet>  
+                            <h:outputText value="#{cliente.razaoSocial}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">CNPJ</f:facet>  
+                            <h:outputText value="#{cliente.cnpj}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Telefone</f:facet>  
+                            <h:outputText value="#{cliente.telefone}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">E-mail</f:facet>  
+                            <h:outputText value="#{cliente.email}" />  
+                        </p:column>
+
+                        <p:column exportable="false" style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputText value="Opções"/>
+                            </f:facet>
+
+                            <p:commandButton value="Editar" 
+                                             actionListener="#{clienteController.selecionaAlterar(cliente.id)}"
+                                             update=":JanelaCadastroCliente"
+                                             onclick="PF('cadastroCliente').show();"
+                                             icon="fa fa-edit"
+                                             style="font-size: 12px;"
+                                             />
+
+                            <p:commandButton value="Remover"
+                                             onclick="PF('excluir').show();"
+                                             icon="fa fa-minus-circle"
+                                             actionListener="#{clienteController.seleciona(cliente.id)}"
+                                             image="excluir"/>
+                        </p:column>
+                    </p:dataTable>
+                    <!--Fim da tabela cliente-->
+
+                    <p:separator style="visibility: hidden"/>
+                    <p:commandButton value="Novo" 
+                                     update=":JanelaCadastroCliente"
+                                     action="#{clienteController.novo}" 
+                                     onclick="PF('cadastroCliente').show();"
+                                     icon="fa fa-plus"
+                                     />
+                    <p:separator style="visibility: hidden"/>
+
+                    <!--Exporta os dados da tabela para pdf ou excel-->
+                    <p:panel header="Exportar dados em">
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/excel.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="xls" target="TabelaCliente" fileName="pessdes" pageOnly="true"/>
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/pdf.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="pdf" target="TabelaCliente" fileName="Clientes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="csv" target="TabelaCliente" fileName="Clientes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="xml" target="TabelaCliente" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+                    </p:panel>
+                    <!--Fim do exporta os dados da tabela para pdf ou excel-->
+
+                    <h:link value="Voltar" outcome="index" style="font-size: 14px" />
+
+                </h:form>
+            </ui:define>
+        </ui:decorate>
+    </h:body>
+
+    <!--Excluir janela-->
+    <h:form id="exclusao">
+        <h:body>
+            <p:confirmDialog id="confirmaExclusao" style="font-size: 12px" 
+                             showEffect="explode" 
+                             hideEffect="explode"
+                             message="Deseja Realmente Excluir o Registro?"  
+                             header="Confirma a Exclusão?" 
+                             severity="alert" 
+                             widgetVar="excluir">  
+                <div align="center">
+                    <p:commandButton icon="fa fa-check" id="confirm" value="Sim"  oncomplete="validaErroIntegridade(xhr, status, args)"  update=":FormularioTabela" actionListener="#{clienteController.excluir}"/>  
+                    <p:commandButton icon="fa fa-ban" id="decline" value="Não" onclick="excluir.hide()" />   
+                </div>
+            </p:confirmDialog>  
+        </h:body>
+    </h:form>
+    <!--Fim do excluir janela-->
+
+    <!--Começo da janela de cadastro de cliente-->
+    <p:dialog modal="true" style="font-size: 13px"
+
+              widgetVar="cadastroCliente" 
+              width="500" 
+              id="cadastroClientes"
+              header="Cadastro de Cliente" 
+              resizable="false"
+              showEffect="explode" 
+              hideEffect="explode"
+
+              >
+
+        <div align="center">
+            <h:body style="font-size: 12px">
+                <h:form id="JanelaCadastroCliente"> 
+                    <p:growl id="msg"/>
+                    <h:panelGrid columns="2" cellpadding="0" cellspacing="5" >
+
+                        <h:outputText value="Razão Social: * "/>
+
+                        <p:inputText id="nomeCompleto" 
+                                     value="#{clienteController.user.razaoSocial}"
+                                     label="Nome"
+                                     required="true" maxlength="100"
+                                     requiredMessage="Campo 'Nome' Obrigatório!" 
+                                     />
+
+                        <h:outputText value="Nome Fantasia: * "/>
+
+                        <p:inputText id="fantasia" required="true" label="nomeFantasia"
+                                     value="#{clienteController.user.nomeFantasia}" maxlength="200"
+                                     requiredMessage="Campo 'Nome Fantasia' Obrigatório!"
+
+                                     />
+
+                        <h:outputText value="CNPJ: * "/>
+
+                        <p:inputMask id="cnpj" mask="99.999.999/9999-99" required="true" label="CNPJ"
+                                     value="#{clienteController.user.cnpj}" maxlength="18"
+                                     requiredMessage="Campo 'CNPJ' Obrigatório!"
+                                     >
+                            <f:validator validatorId="validaCnpj"/>
+                        </p:inputMask>
+
+                        <h:outputText value="Inscrição Estadual: "/>
+
+                        <p:inputText id="inscEstadual" label="inscEstadual"
+                                     value="#{clienteController.user.inscEstadual}" maxlength="20"
+
+                                     />
+
+                        <h:outputText value="Inscrição Municipal: "/>
+
+                        <p:inputText id="inscMunicipal" label="inscMunicipal"
+                                     value="#{clienteController.user.inscMunicipal}" maxlength="20"
+
+                                     />
+
+                        <h:outputText value="CEP: * "/>
+                        <p:inputMask id="cep" 
+                                     mask="99999-999"
+                                     value="#{clienteController.user.cep}"
+                                     label="CEP"
+                                     required="true"
+                                     requiredMessage="Campo 'CEP' Obrigatório!"
+                                     />  
+
+                        <h:outputText value="Endereço: * "/>
+
+                        <p:inputText id="endereco" required="true" label="endereco"
+                                     value="#{clienteController.user.endereco}" maxlength="200"
+                                     requiredMessage="Campo 'Endereço' Obrigatório!"
+
+                                     />
+
+                        <h:outputText value="Número: * "/>
+
+                        <p:inputText id="numero" required="true" label="numero"
+                                     value="#{clienteController.user.numero}" maxlength="20"
+                                     requiredMessage="Campo 'Número' Obrigatório!"
+
+                                     />
+
+                        <h:outputText value="Bairro: * "/>
+
+                        <p:inputText id="bairro" required="true" label="bairro"
+                                     value="#{clienteController.user.bairro}" maxlength="100"
+                                     requiredMessage="Campo 'Bairro' Obrigatório!"
+
+                                     />
+
+                        <h:outputText value="Estado: * "/>
+                        <p:selectOneMenu value="#{clienteController.user.estado}" style="width: 175px" >  
+                            <f:selectItem itemLabel="AC" itemValue="AC"/> 
+                            <f:selectItem itemLabel="AL" itemValue="AL"/> 
+                            <f:selectItem itemLabel="AM" itemValue="AM"/> 
+                            <f:selectItem itemLabel="AP" itemValue="AP"/> 
+                            <f:selectItem itemLabel="BA" itemValue="BA"/> 
+                            <f:selectItem itemLabel="CE" itemValue="CE"/> 
+                            <f:selectItem itemLabel="DF" itemValue="DF"/> 
+                            <f:selectItem itemLabel="ES" itemValue="ES"/> 
+                            <f:selectItem itemLabel="GO" itemValue="GO"/> 
+                            <f:selectItem itemLabel="MA" itemValue="MA"/> 
+                            <f:selectItem itemLabel="MG" itemValue="MG"/> 
+                            <f:selectItem itemLabel="MS" itemValue="MS"/> 
+                            <f:selectItem itemLabel="MT" itemValue="MT"/> 
+                            <f:selectItem itemLabel="PA" itemValue="PA"/> 
+                            <f:selectItem itemLabel="PB" itemValue="PB"/> 
+                            <f:selectItem itemLabel="PE" itemValue="PE"/> 
+                            <f:selectItem itemLabel="PI" itemValue="PI"/> 
+                            <f:selectItem itemLabel="PR" itemValue="PR"/> 
+                            <f:selectItem itemLabel="RJ" itemValue="RJ"/> 
+                            <f:selectItem itemLabel="RN" itemValue="RN"/> 
+                            <f:selectItem itemLabel="RO" itemValue="RO"/> 
+                            <f:selectItem itemLabel="RR" itemValue="RR"/> 
+                            <f:selectItem itemLabel="RS" itemValue="RS"/> 
+                            <f:selectItem itemLabel="SC" itemValue="SC"/> 
+                            <f:selectItem itemLabel="SE" itemValue="SE"/> 
+                            <f:selectItem itemLabel="SP" itemValue="SP"/> 
+                            <f:selectItem itemLabel="TO" itemValue="TO"/> 
+                        </p:selectOneMenu>  
+
+                        <h:outputText value="Cidade: * "/>
+
+                        <p:inputText id="cidade" required="true" label="cidade"
+                                     value="#{clienteController.user.cidade}" maxlength="50"
+                                     requiredMessage="Campo 'Cidade' Obrigatório!"
+
+                                     />
+
+                        <h:outputText  value="Telefone:*" /> 
+                        <p:inputMask id="telfone" 
+                                     mask="(99)9999-9999"
+                                     required="true" 
+                                     label="Telefone"
+                                     value="#{clienteController.user.telefone}"
+                                     requiredMessage="Campo 'Telefone' Obrigatório!"
+                                     />
+
+                        <h:outputText  value="Celular:" /> 
+
+                        <p:inputMask id="celular" 
+                                     mask="(99)9999-9999"
+                                     required="false" 
+                                     label="Celular"
+                                     value="#{clienteController.user.celular}"
+                                     />
+
+                        <h:outputText value="E-mail: * "/>
+
+                        <p:inputText id="email" required="true" label="email"
+                                     value="#{clienteController.user.email}" maxlength="200"
+                                     requiredMessage="Campo 'E-mail' Obrigatório!"
+                                     />
+
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <h:panelGrid columns="3" cellpadding="0" cellspacing="5">
+                        <p:commandButton id="seila" 
+                                         value="Salvar" 
+                                         image="salvar"
+                                         update=" msg, JanelaCadastroCliente,:FormularioTabela" 
+                                         actionListener="#{clienteController.salvar}"
+                                         oncomplete="validaForm(xhr, status, args)"
+                                         icon="fa fa-save"
+                                         />
+                    </h:panelGrid>
+                </h:form>        
+            </h:body>
+        </div>
+    </p:dialog>
+    <!--Fim da janela de cadastro de cliente-->
+</html>
+

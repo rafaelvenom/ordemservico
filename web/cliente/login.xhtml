@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head>
+
+        <!-- Biblioteca dos icones dos botões !-->
+        <h:outputStylesheet library="awesome" name="css/font-awesome.css" />
+        <!-- Biblioteca dos icones dos botões !-->
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 18px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body>
+
+        <div align="center">
+
+            <p:layout style="width:1430px; height: 1000px;">
+
+                <p:layoutUnit position="north" size="154" resizable="false" closable="false" collapsible="false">  
+                    <p:graphicImage style="border-spacing: 0" url="/imagem/topo.png"/>
+
+                </p:layoutUnit>  
+
+                <p:layoutUnit position="south" size="114"  resizable="false" closable="false" collapsible="false">  
+
+                    <p:graphicImage style="border-spacing: 0" url="/imagem/rodape.png"/>
+                </p:layoutUnit>  
+
+                <p:layoutUnit position="center">  
+
+                    <ui:insert name="centro">
+                        <h:form id="formulario">
+                            <h:panelGrid columns="1" cellspacing="5">
+
+                                <h:outputText style="font-size: 30px" value="Acessar minha Conta"/>
+
+                                <h:outputLabel style="text-align: center" value="Informe o CNPJ:"/>
+                                <p:inputMask 
+                                    mask="99.999.999/9999-99"
+                                    size="40" id="emailLogin" 
+                                    value="#{loginController.cnpj}" placeholder="Informe o CNPJ"
+                                    required="true"
+                                    requiredMessage="Informe o CNPJ!"
+                                    />
+
+                                <p:separator style="visibility: hidden; font-size: 8px"/>
+
+                                <p:separator style="visibility: hidden; font-size: 8px"/>
+                                <p:separator/>
+                                <p:commandButton style="text-align: center" icon="fa fa-lock" value="Entrar" ajax="false" action="#{loginController.logarCliente()}"/>
+
+                                <h:link value="Área Administrativa" outcome="/login" style="font-size: 16px;" />
+
+                            </h:panelGrid>
+                            <p:messages id="f1" autoUpdate="true" severity="error" escape="true" showDetail="true" />
+                        </h:form>
+                    </ui:insert>
+                </p:layoutUnit>  
+                <h:commandLink value="Sair" style="font-size: 14px"/>
+            </p:layout>  
+        </div>
+    </h:body>
+</html>
+

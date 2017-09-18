@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+
+        <!-- Biblioteca dos icones dos botões !-->
+        <h:outputStylesheet library="awesome" name="css/font-awesome.css" />
+        <!-- Biblioteca dos icones dos botões !-->
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 15px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body>
+
+        <div align="center">
+
+            <p:layout style="width:1430px; height: 1000px;">
+
+                <p:layoutUnit position="north" size="154" resizable="false" closable="false" collapsible="false">  
+                    <p:graphicImage style="border-spacing: 0" url="/imagem/topo.png"/>
+
+                </p:layoutUnit>  
+
+                <p:layoutUnit position="south" size="114"  resizable="false" closable="false" collapsible="false">  
+
+                    <p:graphicImage style="border-spacing: 0" url="/imagem/rodape.png"/>
+                </p:layoutUnit>  
+
+                <p:layoutUnit position="west" size="200px" resizable="false" closable="false" collapsible="true">  
+                    <h:form>
+                        <p:growl id="messages" showDetail="false"/>
+
+                        <p:menu >
+
+                            <p:submenu label="Consulta" style="size:200px">
+
+                                <p:menuitem value="Ordem de Serviço" url="Ordem_Servico.xhtml"/>
+
+                            </p:submenu>
+
+                        </p:menu>
+                    </h:form>
+                </p:layoutUnit>  
+
+                <p:layoutUnit position="center">  
+
+                    <ui:insert name="centro">
+                        <h:form>
+
+                            <p:growl id="messages"/>
+
+                            <h:outputFormat style="font-size: 20px" value="Olá {0}">
+                                <f:param value="#{loginController.cliente.razaoSocial}"/>                                
+                            </h:outputFormat>
+                            <br/>
+
+                            <h:commandLink value="Sair" action="#{loginController.logoutCliente()}" style="font-size: 14px"/>
+
+                            <br/>
+
+                        </h:form>    
+                    </ui:insert>
+                </p:layoutUnit>  
+
+            </p:layout>  
+        </div>
+    </h:body>
+</html>
+

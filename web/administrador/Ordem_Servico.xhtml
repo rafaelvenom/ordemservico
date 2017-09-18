@@ -1,0 +1,403 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head >
+        <title>Controle de Ordem de Servico</title>
+
+        <!--Inicio de validação de  exclusão-->
+        <script type="text/javascript">
+            function validaForm(xhr, status, args) {
+                if (args.validationFailed || !args.sucesso) {
+                    //faz nada
+                } else {
+                    PF('cadastroOrdem_Servico').hide();
+                }
+            }
+
+            function validaErroIntegridade(xhr, status, args) {
+                if (args.validationFailed || !args.sucesso) {
+                    alert("Registro Possui Vinculo Com outros Modulos e Não Pode Ser Excluido!");
+                    PF('excluir').hide();
+                } else {
+                    PF('excluir').hide();
+                }
+            }
+
+        </script> 
+        <!--Fim de validação de  exclusão-->
+
+        <script>
+            PrimeFaces.locales['pt'] = {
+                closeText: 'Fechar',
+                prevText: 'Anterior',
+                nextText: 'Próximo',
+                currentText: 'Começo',
+                monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 0,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Só Horas',
+                timeText: 'Tempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                ampm: false,
+                month: 'Mês',
+                week: 'Semana',
+                day: 'Dia',
+                allDayText: 'Todo o Dia'
+            };
+        </script>
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 12px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body style="font-size: 10px;">
+
+        <ui:decorate template="index.xhtml">
+
+            <ui:define name="centro">
+
+                <h:form id="FormularioTabela">
+
+
+                    <p:growl id="messages"/>
+
+                    <p:menubar>
+                        <p:submenu label="Cadastrar" icon="ui-icon-document">
+                            <p:submenu label="Novo(a)" icon="ui-icon-contact">
+                                <p:menuitem value="Cliente" url="Cliente.xhtml"/>
+
+                                <p:menuitem value="Departamento" url="Departamento.xhtml"/>
+
+                                <p:menuitem value="Ordem de Serviço" url="Ordem_Servico.xhtml"/>
+
+                                <p:menuitem value="Serviço" url="Servico.xhtml"/>
+
+                                <p:menuitem value="Técnico" url="Tecnico.xhtml"/>
+
+                                <p:menuitem value="Usuário" url="Usuario.xhtml"/>
+                            </p:submenu>
+                        </p:submenu>
+
+                        <p:menuitem value="Sair do sistema" action="#{loginController.logout()}" icon="ui-icon-close" ajax="false" />
+
+                        <f:facet name="options">
+                            <h:outputText value='Logado como: #{loginController.usuario.nome.toUpperCase()}'/>
+                        </f:facet>
+
+                    </p:menubar>
+
+                    <p:separator/>
+
+
+                    <!--Inicio da tabela ordem de serviço-->
+                    <p:dataTable id="TabelaOrdensDeServico" var="ordem" value="#{ordem_ServicoController.lista}" paginator="TRUE" rows="10" emptyMessage="Não ha Registros no Banco de Dados!" widgetVar="tav">
+
+                        <!--Titulo da tabela-->
+                        <f:facet name="header">  
+                            <p:outputPanel>  
+                                <h:outputText value="Controle de Ordem Serviço" />  
+                            </p:outputPanel>  
+                        </f:facet>  
+                        <!--Fim do titulo da tabela-->
+
+                        <p:column style="text-align: center;" filterBy="#{ordem.id}">  
+                            <f:facet name="header">Código</f:facet>  
+                            <h:outputText value="#{ordem.id}" />  
+                        </p:column>
+
+                        <p:column headerText="Razão Social" style="text-align: center;">  
+                            <h:outputText value="#{ordem.cliente.razaoSocial}" />  
+                        </p:column>
+
+                        <p:column headerText="Departamento" style="text-align: center;">  
+                            <h:outputText value="#{ordem.departamento.descricao}" />  
+                        </p:column>
+
+                        <p:column headerText="Serviço" style="text-align: center;">  
+                            <h:outputText value="#{ordem.servico.descricao}" />  
+                        </p:column>
+
+                        <p:column headerText="Situação" style="text-align: center;">  
+                            <h:outputText value="#{ordem.situacao}" />  
+                        </p:column>
+
+                        <p:column exportable="false" style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputText value="Opções"/>
+                            </f:facet>
+
+                            <p:commandButton 
+                                title="Editar ordem de serviço"
+                                actionListener="#{ordem_ServicoController.selecionaAlterar(ordem.id,ordem.cliente.id,ordem.servico.id,ordem.tecnico.id,ordem.departamento.id)}"
+                                update=":JanelaCadastroOrdem"
+                                onclick="PF('cadastroOrdem_Servico').show();"
+                                icon="fa fa-edit"
+                                style="font-size: 12px;"
+                                />
+
+                            <p:commandButton 
+                                title="Excluir ordem de serviço"
+                                onclick="PF('excluir').show();"
+                                icon="fa fa-minus-circle"
+                                actionListener="#{ordem_ServicoController.seleciona(ordem.id)}"
+                                image="excluir"/>
+
+                            <p:commandButton 
+                                title="Imprimir ordem de serviço"
+                                icon="fa fa-print"
+                                actionListener="#{ordem_ServicoController.visualizarRelatorio(ordem.id,ordem.cliente.razaoSocial)}"
+                                ajax="false"
+                                />
+
+                        </p:column>
+                    </p:dataTable>
+                    <!--Fim da tabela de exibição das ordem de serviço-->
+
+                    <p:separator style="visibility: hidden"/>
+
+                    <p:commandButton value="Novo" 
+                                     update=":JanelaCadastroOrdem"
+                                     action="#{ordem_ServicoController.novo}" 
+                                     onclick="PF('cadastroOrdem_Servico').show();"
+                                     icon="fa fa-plus"
+                                     />
+                    <p:separator style="visibility: hidden"/>
+
+                    <!--Exporta os dados da tabela para pdf ou excel-->
+                    <p:panel header="Exportar dados em">
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/excel.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="xls" target="TabelaOrdensDeServico" fileName="pessdes" pageOnly="true"/>
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/pdf.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="pdf" target="TabelaOrdensDeServico" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="csv" target="TabelaOrdensDeServico" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="xml" target="TabelaOrdensDeServico" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+                    </p:panel>
+                    <!--Fim do exporta os dados da tabela para pdf ou excel-->
+
+                    <h:link value="Voltar" outcome="index" style="font-size: 14px" />
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+
+                </h:form>
+            </ui:define>
+        </ui:decorate>
+    </h:body>
+
+    <!--Excluir janela-->
+    <h:form id="exclusao">
+        <h:body>
+            <p:confirmDialog id="confirmaExclusao" style="font-size: 12px" 
+                             showEffect="explode" 
+                             hideEffect="explode"
+                             message="Deseja Realmente Excluir o Registro?"  
+                             header="Confirma a Exclusão?" 
+                             severity="alert" 
+                             widgetVar="excluir">  
+                <div align="center">
+                    <p:commandButton icon="fa fa-check" id="confirm" value="Sim"  oncomplete="validaErroIntegridade(xhr, status, args)"  update=":FormularioTabela" actionListener="#{ordem_ServicoController.excluir()}"/>  
+                    <p:commandButton icon="fa fa-ban" id="decline" value="Não" onclick="excluir.hide()" />   
+                </div>
+            </p:confirmDialog>  
+        </h:body>
+    </h:form>
+    <!--Fim do excluir janela-->
+
+    <!--Começo da janela de cadastro de Ordem de serviço-->
+    <p:dialog modal="true" style="font-size: 10px"
+
+              widgetVar="cadastroOrdem_Servico" 
+              width="700" 
+              id="cadastroOrdem_Servicos"
+              header="Cadastro de Ordem de Serviço" 
+              resizable="false"
+              showEffect="explode" 
+              hideEffect="explode"
+
+              >
+
+        <div align="center">
+            <h:body style="font-size: 10px">
+                <h:form id="JanelaCadastroOrdem"> 
+                    <p:growl id="msg"/>
+
+                    <h:panelGrid  style="margin-left:auto;margin-right: auto" columns="4" cellpadding="0" cellspacing="5" >
+
+
+                        <h:outputText value="Cliente: *"/> 
+
+                        <p:selectOneMenu filter="true" filterMatchMode="startsWith" value="#{ordem_ServicoController.idCliente}" required="true" requiredMessage="Selecione um Cliente!" style="width: 200px;" >  
+                            <f:selectItem itemLabel="Selecione um Cliente" itemValue="" />
+                            <f:selectItems value="#{clienteController.lista}" var="tq" 
+                                           itemLabel="#{tq.razaoSocial}" itemValue="#{tq.id}" />   
+
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Serviço: *"/> 
+
+                        <p:selectOneMenu filter="true" filterMatchMode="startsWith" value="#{ordem_ServicoController.idServico}" required="true" requiredMessage="Selecione um Serviço!" style="width: 200px" >  
+                            <f:selectItem itemLabel="Selecione um Serviço" itemValue="" />
+                            <f:selectItems value="#{servicoController.lista}" var="tq" 
+                                           itemLabel="#{tq.descricao}" itemValue="#{tq.id}" />   
+
+                        </p:selectOneMenu>
+
+                    </h:panelGrid>
+
+                    <h:panelGrid  style="margin-left:auto;margin-right: auto" columns="2" cellpadding="0" cellspacing="5" >
+
+                        <h:outputText value="Técnico Responsável: *"/> 
+
+                        <p:selectOneMenu filter="true" filterMatchMode="startsWith" value="#{ordem_ServicoController.idTecnico}" required="true" requiredMessage="Selecione um Técnico Responsável!" style="width: 260px" >  
+                            <f:selectItem itemLabel="Selecione um Técnico Responsável" itemValue="" />
+                            <f:selectItems value="#{tecnicoController.lista}" var="tq1" 
+                                           itemLabel="#{tq1.nome}" itemValue="#{tq1.id}" />   
+
+                        </p:selectOneMenu>
+
+                    </h:panelGrid>
+
+                    <h:panelGrid  style="margin-left:auto;margin-right: auto" columns="2" cellpadding="0" cellspacing="5" >
+
+                        <h:outputText value="Departamento: * "/> 
+
+                        <p:selectOneMenu filter="true" filterMatchMode="startsWith" value="#{ordem_ServicoController.idDepartamento}" required="true" requiredMessage="Selecione um Departamento!" style="width: 230px" >  
+                            <f:selectItem itemLabel="Selecione um Departamento" itemValue="" />
+                            <f:selectItems value="#{departamentoController.lista}" var="tq" 
+                                           itemLabel="#{tq.descricao}" itemValue="#{tq.id}" />   
+
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+
+                    <h:panelGrid  style="margin-left:auto;margin-right: auto" columns="4" cellpadding="0" cellspacing="5" >
+
+                        <h:outputText value="Data Inicial:*" /> 
+
+                        <p:calendar id="data_inicio" navigator="true"
+                                    locale="pt"
+                                    pattern="dd/MM/yyyy" yearRange="1920:2016"
+                                    required="true" label="Data Inicial"
+                                    mask="99/99/9999"
+                                    requiredMessage="Campo 'Data Inicial' Obrigatório!"
+                                    value="#{ordem_ServicoController.user.data_inicio}" />  
+
+                        <h:outputText value="Horário Inicial: * "/>
+
+                        <p:calendar id="hora_inicio"
+                                    locale="pt"
+                                    mask="99:99"
+                                    required="true" 
+                                    requiredMessage="Campo 'Horário Inicial' Obrigatório!"
+                                    value="#{ordem_ServicoController.user.hora_inicio}"
+                                    pattern="HH:mm" timeOnly="true">
+                        </p:calendar>
+
+                        <h:outputText value="Data Final:*" /> 
+
+                        <p:calendar id="data_fim" navigator="true"
+                                    locale="pt"
+                                    pattern="dd/MM/yyyy" yearRange="1920:2016"
+                                    required="true" label="Data Final"
+                                    mask="99/99/9999"
+                                    requiredMessage="Campo 'Data Final' Obrigatório!"
+                                    value="#{ordem_ServicoController.user.data_fim}" />    
+
+                        <h:outputText value="Horário Final: * "/>
+                        <p:calendar id="hora_fim"
+                                    locale="pt"
+                                    mask="99:99"
+                                    required="true" 
+                                    requiredMessage="Campo 'Horário Final' Obrigatório!"
+                                    value="#{ordem_ServicoController.user.hora_fim}"
+                                    pattern="HH:mm" timeOnly="true">
+                        </p:calendar>
+                    </h:panelGrid>
+
+                    <h:panelGrid  style="margin-left:auto;margin-right: auto" columns="4" cellpadding="0" cellspacing="5" >
+
+                        <h:outputText value="Situação da OS: * "/> 
+
+                        <p:selectOneMenu required="true" requiredMessage="Selecione uma Situação!" value="#{ordem_ServicoController.user.situacao}" style="width: 200px" >  
+                            <f:selectItem itemLabel="Informe a Situação" itemValue="" />
+                            <f:selectItem itemLabel="Em execução" itemValue="Em execução"/>  
+                            <f:selectItem itemLabel="Finalizada" itemValue="Finalizada"/> 
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="" cellpadding="0" cellspacing="10">
+
+                        <h:outputText value="Defeito Relatado: * "/>
+
+                        <p:inputTextarea id="defeito_relato" 
+                                         value="#{ordem_ServicoController.user.defeito_relato}"
+                                         label="defeito_relato"
+                                         rows="2"
+                                         required="true" maxlength="200"
+                                         requiredMessage="Campo 'Defeito Relatado' Obrigatório!" 
+                                         style="width: 600px"
+                                         />
+
+                        <h:outputText value="Descrição do Serviço: "/>
+
+                        <p:inputTextarea id="detalhe_servico" 
+                                         value="#{ordem_ServicoController.user.detalhe_servico}"
+                                         rows="2"
+                                         label="detalhe_servico"
+                                         style="width:600px;"
+                                         />
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <h:panelGrid columns="3" cellpadding="0" cellspacing="5">
+                        <p:commandButton id="seila" 
+                                         value="Salvar" 
+                                         image="salvar"
+                                         update=" msg, JanelaCadastroOrdem,:FormularioTabela" 
+                                         actionListener="#{ordem_ServicoController.salvar}"
+                                         oncomplete="validaForm(xhr, status, args)"
+                                         icon="fa fa-save"
+                                         />
+                    </h:panelGrid>
+                </h:form>   
+
+            </h:body>
+        </div>
+    </p:dialog>
+    <!--Fim da janela de cadastro de Ordem de serviço-->
+</html>
+

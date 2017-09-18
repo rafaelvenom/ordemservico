@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:head>
+        <title>Controle de Departamento</title>
+
+        <!--Inicio de validação de  exclusão-->
+        <script type="text/javascript">
+            function validaForm(xhr, status, args) {
+                if (args.validationFailed || !args.sucesso) {
+                    //faz nada
+                } else {
+                    PF('cadastroDepartamento').hide();
+                }
+            }
+
+            function validaErroIntegridade(xhr, status, args) {
+                if (args.validationFailed || !args.sucesso) {
+                    alert("Registro Possui Vinculo Com outros Modulos e Não Pode Ser Excluido!");
+                    PF('excluir').hide();
+                } else {
+                    PF('excluir').hide();
+                }
+            }
+
+        </script> 
+        <!--Fim de validação de  exclusão-->
+
+        <style type="text/css">
+            .ui-widget {
+                font-size: 13px !important;
+            }
+        </style>
+
+    </h:head>
+
+    <h:body style="font-size: 10px">
+        <ui:decorate template="index.xhtml">
+            <ui:define name="centro">
+                <h:form id="FormularioTabela">
+
+                    <p:growl id="messages"/>
+
+                            <p:menubar>
+                                <p:submenu label="Cadastrar" icon="ui-icon-document">
+                                    <p:submenu label="Novo(a)" icon="ui-icon-contact">
+                                        <p:menuitem value="Cliente" url="Cliente.xhtml"/>
+
+                                        <p:menuitem value="Departamento" url="Departamento.xhtml"/>
+
+                                        <p:menuitem value="Ordem de Serviço" url="Ordem_Servico.xhtml"/>
+
+                                        <p:menuitem value="Serviço" url="Servico.xhtml"/>
+
+                                        <p:menuitem value="Técnico" url="Tecnico.xhtml"/>
+
+                                        <p:menuitem value="Usuário" url="Usuario.xhtml"/>
+                                    </p:submenu>
+                                </p:submenu>
+
+                                <p:menuitem value="Sair do sistema" action="#{loginController.logout()}" icon="ui-icon-close" ajax="false" />
+
+                                <f:facet name="options">
+                                    <h:outputText value='Logado como: #{loginController.usuario.nome.toUpperCase()}'/>
+                                </f:facet>
+
+                            </p:menubar>
+
+                            <p:separator/>
+                    
+                    
+                    <!--Inicio da tabela departamento-->
+                    <p:dataTable id="TabelaDepartamento" var="departamento" value="#{departamentoController.lista}" paginator="TRUE" rows="10" emptyMessage="Não ha Registros no Banco de Dados!" widgetVar="tav">
+
+                        <!--Titulo da tabela-->
+                        <f:facet name="header">  
+                            <p:outputPanel>  
+                                <h:outputText value="Controle de Departamento" />  
+                            </p:outputPanel>  
+                        </f:facet>  
+                        !--Fim do titulo da tabela-->
+
+                        <p:column style="text-align: center;" filterBy="#{departamento.descricao}">  
+                            <f:facet name="header">Setor</f:facet>  
+                            <h:outputText value="#{departamento.descricao}" />  
+                        </p:column>
+
+                        <p:column style="text-align: center;">  
+                            <f:facet name="header">Responsável</f:facet>  
+                            <h:outputText value="#{departamento.responsavel}" />  
+                        </p:column>
+
+                        <p:column exportable="false" style="text-align: center;">
+                            <f:facet name="header">
+                                <h:outputText value="Opções"/>
+                            </f:facet>
+
+                            <p:commandButton value="Editar" 
+                                             actionListener="#{departamentoController.selecionaAlterar(departamento.id)}"
+                                             update=":JanelaCadastroDepartamento"
+                                             onclick="PF('cadastroDepartamento').show();"
+                                             icon="fa fa-edit"
+                                             style="font-size: 12px;"
+                                             />
+
+                            <p:commandButton value="Remover"
+                                             onclick="PF('excluir').show();"
+                                             icon="fa fa-minus-circle"
+                                             actionListener="#{departamentoController.seleciona(departamento.id)}"
+                                             image="excluir"/>
+                        </p:column>
+                    </p:dataTable>
+                    <!--Fim da tabela cliente-->
+
+                    <p:separator style="visibility: hidden"/>
+                    <p:commandButton value="Novo" 
+                                     update=":JanelaCadastroDepartamento"
+                                     action="#{departamentoController.novo}" 
+                                     onclick="PF('cadastroDepartamento').show();"
+                                     icon="fa fa-plus"
+                                     />
+                    <p:separator style="visibility: hidden"/>
+
+                    <!--Exporta os dados da tabela para pdf ou excel-->
+                    <p:panel header="Exportar dados em">
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/excel.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="xls" target="TabelaDepartamento" fileName="pessdes" pageOnly="true"/>
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage width="24" url="../imagem/pdf.png" />
+                            <p:dataExporter encoding="iso-8859-1" type="pdf" target="TabelaDepartamento" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="csv" target="TabelaDepartamento" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:dataExporter encoding="iso-8859-1" type="xml" target="TabelaDepartamento" fileName="pessdes" pageOnly="true" />
+                        </h:commandLink>
+                    </p:panel>
+                    <!--Fim do exporta os dados da tabela para pdf ou excel-->
+
+                    <h:link value="Voltar" outcome="index" style="font-size: 14px" />
+
+                </h:form>
+            </ui:define>
+        </ui:decorate>
+    </h:body>
+
+    <!--Excluir janela-->
+    <h:form id="exclusao">
+        <h:body>
+            <p:confirmDialog id="confirmaExclusao" style="font-size: 12px" 
+                             showEffect="explode" 
+                             hideEffect="explode"
+                             message="Deseja Realmente Excluir o Registro?"  
+                             header="Confirma a Exclusão?" 
+                             severity="alert" 
+                             widgetVar="excluir">  
+                <div align="center">
+                    <p:commandButton icon="fa fa-check" id="confirm" value="Sim"  oncomplete="validaErroIntegridade(xhr, status, args)"  update=":FormularioTabela" actionListener="#{departamentoController.excluir}"/>  
+                    <p:commandButton icon="fa fa-ban" id="decline" value="Não" onclick="excluir.hide()" />   
+                </div>
+            </p:confirmDialog>  
+        </h:body>
+    </h:form>
+    <!--Fim do excluir janela-->
+
+    <!--Começo da janela de cadastro de departamento-->
+    <p:dialog modal="true" style="font-size: 13px"
+
+              widgetVar="cadastroDepartamento" 
+              width="500" 
+              id="cadastroDepartamentos"
+              header="Cadastro de Departamento" 
+              resizable="false"
+              showEffect="explode" 
+              hideEffect="explode"
+
+              >
+
+        <div align="center">
+            <h:body style="font-size: 12px">
+                <h:form id="JanelaCadastroDepartamento"> 
+                    <p:growl id="msg"/>
+                    <h:panelGrid columns="2" cellpadding="0" cellspacing="5" >
+
+                        <h:outputText value="Nome do Setor: * "/>
+
+                        <p:inputText id="descricao" 
+                                     value="#{departamentoController.user.descricao}"
+                                     label="descricao"
+                                     required="true" maxlength="200"
+                                     requiredMessage="Campo 'Nome do Setor' Obrigatório!" 
+                                     />
+
+                        <h:outputText value="Responsável pelo Setor: * "/>
+
+                        <p:inputText id="responsavel" 
+                                     value="#{departamentoController.user.responsavel}"
+                                     label="responsavel"
+                                     required="true" maxlength="200"
+                                     requiredMessage="Campo 'Responsável pelo Setor' Obrigatório!" 
+                                     />
+
+                    </h:panelGrid>
+
+                    <p:separator/>
+
+                    <h:panelGrid columns="3" cellpadding="0" cellspacing="5">
+                        <p:commandButton id="seila" 
+                                         value="Salvar" 
+                                         image="salvar"
+                                         update=" msg, JanelaCadastroDepartamento,:FormularioTabela" 
+                                         actionListener="#{departamentoController.salvar}"
+                                         oncomplete="validaForm(xhr, status, args)"
+                                         icon="fa fa-save"
+                                         />
+                    </h:panelGrid>
+                </h:form>        
+            </h:body>
+        </div>
+    </p:dialog>
+    <!--Fim da janela de cadastro de departamento-->
+</html>
+
